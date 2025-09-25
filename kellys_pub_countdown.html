@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Countdown to Date with Orion at Kelly's Pub ☘️</title>
+  <meta name="description" content="A wee countdown to the grand date with Orion at Kelly's Pub. Irish accents required!">
+  <style>
+    :root { --bg:#0b1a12; --card:#10261b; --accent:#27ae60; --text:#eaf7ef; --muted:#9ad4b5; }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(1200px 800px at 70% 20%, #173c2a, var(--bg));
+      color:var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+    .card{
+      width:min(760px, 92vw); background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)) , var(--card);
+      border:1px solid rgba(255,255,255,.08); border-radius:24px; padding:28px 24px; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+    h1{margin:0 0 12px; font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing:.3px}
+    .tag{display:inline-block; background: rgba(39,174,96,.15); border:1px solid rgba(39,174,96,.4); color:#baf5d3;
+      padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9rem; margin-bottom:14px}
+    .grid{display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin:18px 0 8px}
+    .tile{background: rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:18px; text-align:center}
+    .num{font-size: clamp(2rem, 6vw, 3.2rem); font-weight:800; line-height:1; letter-spacing:.5px}
+    .lab{margin-top:6px; font-size:.9rem; color:var(--muted); letter-spacing:.6px; text-transform:uppercase}
+    .meta{margin-top:14px; color:var(--muted); font-size:.98rem}
+    .accent{color:var(--accent); font-weight:700}
+    .footer{margin-top:16px; font-size:.95rem}
+    .rules{margin-top:14px; padding:12px; border-radius:14px; background: rgba(39,174,96,.08); border:1px dashed rgba(39,174,96,.35)}
+    .small{font-size:.9rem; color:var(--muted)}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px}
+    button, a.btn{
+      appearance:none; border:none; cursor:pointer; border-radius:999px; padding:10px 14px; font-weight:700;
+      background:var(--accent); color:#042010; text-decoration:none; transition: transform .06s ease;
+    }
+    button:hover, a.btn:hover{ transform: translateY(-1px) }
+    .ghost{ background: transparent; color:var(--text); border:1px solid rgba(255,255,255,.2) }
+    .clock{ font-variant-numeric: tabular-nums; }
+    @media (max-width: 520px){ .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="tag">☘️ Kelly's Pub · Irish-Accent Mandatory</span>
+    <h1>Countdown to the date with <span class="accent">Orion</span> at <span class="accent">Kelly's Pub</span></h1>
+    <div class="meta">Target: <span id="targetText" class="clock"></span></div>
+
+    <section class="grid" aria-label="Countdown timer">
+      <div class="tile"><div id="days" class="num">—</div><div class="lab">Days</div></div>
+      <div class="tile"><div id="hours" class="num">—</div><div class="lab">Hours</div></div>
+      <div class="tile"><div id="mins" class="num">—</div><div class="lab">Minutes</div></div>
+      <div class="tile"><div id="secs" class="num">—</div><div class="lab">Seconds</div></div>
+    </section>
+
+    <div class="rules">
+      <strong>Ground rules, ye gobshite:</strong>
+      <ul>
+        <li>Arrive smilin' and thirsty.</li>
+        <li>Irish accent only — no exceptions. (Aye, even for ordering chips.)</li>
+        <li>When the clock hits zero, off we go!</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      <div class="row">
+        <button id="shareBtn" title="Copy this page link">Copy Page Link</button>
+        <a class="btn ghost" id="addCalendar" href="#" target="_blank" rel="noopener">Add to Google Calendar</a>
+      </div>
+      <p class="small">Built with luck, love, and a dash o’ mischief. Sláinte! 🍻</p>
+    </div>
+  </main>
+
+  <script>
+    // Target time is fixed to: Fri Sep 26, 2025 6:00 PM Central (CDT = UTC-05:00)
+    const TARGET_ISO = "2025-09-26T18:00:00-05:00";
+    const target = new Date(TARGET_ISO);
+
+    function fmtTarget(d){
+      const opts = { weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'numeric', minute:'2-digit', timeZoneName:'short' };
+      return new Intl.DateTimeFormat(undefined, opts).format(d);
+    }
+    document.getElementById("targetText").textContent = fmtTarget(target);
+
+    function update(){
+      const now = new Date();
+      let diff = target - now;
+      if (diff < 0) diff = 0;
+      const s = Math.floor(diff/1000);
+      const days = Math.floor(s / 86400);
+      const hours = Math.floor((s % 86400) / 3600);
+      const mins = Math.floor((s % 3600) / 60);
+      const secs = s % 60;
+      document.getElementById("days").textContent = String(days);
+      document.getElementById("hours").textContent = String(hours).padStart(2,"0");
+      document.getElementById("mins").textContent = String(mins).padStart(2,"0");
+      document.getElementById("secs").textContent = String(secs).padStart(2,"0");
+      if (s === 0){
+        document.title = "It’s time! ☘️ Kelly’s Pub awaits";
+      } else {
+        document.title = `⏳ ${days}d ${String(hours).padStart(2,"0")}h ${String(mins).padStart(2,"0")}m ${String(secs).padStart(2,"0")}s · Kelly's Pub`;
+      }
+    }
+    update();
+    setInterval(update, 1000);
+
+    // Copy the page link (works when hosted); fallback copies page title.
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const toCopy = location.href;
+      try{
+        await navigator.clipboard.writeText(toCopy);
+        alert("Link copied! Send it along, ya legend.");
+      }catch(e){
+        try{
+          await navigator.clipboard.writeText(document.title);
+          alert("Couldn't copy the link, but copied the title instead.");
+        }catch(_){
+          alert("Clipboard blocked. Copy the URL from the address bar.");
+        }
+      }
+    });
+
+    // Quick Google Calendar link to the exact time/place
+    const title = encodeURIComponent("Date with Orion — Irish accents at Kelly's Pub ☘️");
+    const details = encodeURIComponent("Mandatory Irish accent.\nWhen the countdown ends, head to Kelly's Pub. Sláinte!");
+    const locationStr = encodeURIComponent("Kelly's Pub");
+    // Convert TARGET_ISO to a UTC Zulu format for Google Calendar (YYYYMMDDTHHMMSSZ)
+    function toCalTime(d){
+      const z = new Date(d.toISOString()); // already UTC
+      const pad = (n)=> String(n).padStart(2,'0');
+      return `${z.getUTCFullYear()}${pad(z.getUTCMonth()+1)}${pad(z.getUTCDate())}T${pad(z.getUTCHours())}${pad(z.getUTCMinutes())}00Z`;
+    }
+    const start = toCalTime(target);
+    const end = toCalTime(new Date(target.getTime() + 2*60*60*1000)); // 2-hour block
+    const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${locationStr}`;
+    const cal = document.getElementById("addCalendar");
+    cal.href = calUrl;
+  </script>
+</body>
+</html>
