@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PJM Direct Access: 100% Demand Response Revenue</title>
+    <title>PJM Direct Access: An Exclusive Revenue Program</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -31,17 +31,53 @@
                 <a href="#calculator" class="nav-link font-semibold text-slate-600">ROI Calculator</a>
                 <a href="#benefits" class="nav-link font-semibold text-slate-600">Your Benefits</a>
             </div>
-            <a href="#contact" class="hidden md:block bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors">Get Started</a>
+            <a href="#qualify" class="hidden md:block bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors">See If You Qualify</a>
         </nav>
     </header>
 
     <main class="container mx-auto px-6 py-12">
 
+        <section id="hero" class="text-center py-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-sky-800 leading-tight">An Exclusive Invitation for a <span class="text-orange-500">New Tier</span> of Demand Response Revenue.</h1>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">Due to unprecedented market conditions, a private program is now available for select PJM businesses to capture 100% of their Demand Response revenue. See if your organization qualifies to eliminate commission payments entirely.</p>
+        </section>
+
+        <section id="qualify" class="py-16">
+            <div class="bg-white rounded-xl shadow-lg p-8 md:p-12">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-sky-800">Check Your Eligibility</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">This program is for large energy users who are ready to transition to a more profitable partnership. Please provide the following to see if you qualify for a private assessment.</p>
+                </div>
+                <div class="mt-8 max-w-xl mx-auto">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="contract-expiry" class="block text-sm font-bold text-slate-700 mb-2">When does your current Demand Response provider contract expire?</label>
+                            <input type="date" id="contract-expiry" name="contract-expiry" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                        </div>
+                        <div>
+                            <label for="peak-load" class="block text-sm font-bold text-slate-700 mb-2">What is your average peak load curtailment potential?</label>
+                            <select id="peak-load" name="peak-load" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                                <option>1-5 MW</option>
+                                <option>6-10 MW</option>
+                                <option>11-20 MW</option>
+                                <option>20+ MW</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <button id="check-eligibility-btn" class="bg-orange-500 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-orange-600 transition-transform hover:scale-105">Check Eligibility</button>
+                        </div>
+                        <div id="eligibility-result" class="text-center text-lg font-semibold hidden pt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
         <section id="opportunity" class="text-center py-16">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-sky-800 leading-tight">The PJM Demand Response <span class="text-orange-500">Gold Rush</span> Is Here.</h1>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-sky-800 leading-tight">The Financial Opportunity for <span class="text-orange-500">Qualified Partners</span></h2>
             <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">A confluence of market forces has caused PJM capacity prices to surge to unprecedented levels. This has transformed Demand Response into a multi-million dollar opportunity for businesses like yours. The question is: are you capturing its full value?</p>
             <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mt-12">
-                <h2 class="text-2xl md:text-3xl font-bold text-sky-700 mb-4">The Dramatic Rise in PJM Capacity Prices</h2>
+                <h3 class="text-2xl md:text-3xl font-bold text-sky-700 mb-4">The Dramatic Rise in PJM Capacity Prices</h3>
                 <p class="text-slate-600 max-w-2xl mx-auto mb-6">Prices have skyrocketed, turning energy flexibility into a major financial asset. This chart shows the exponential growth in what PJM pays for capacity, highlighting the increasing cost of inaction.</p>
                 <div class="chart-container">
                     <canvas id="capacityPriceChart"></canvas>
@@ -180,7 +216,7 @@
              <div class="bg-white rounded-xl shadow-lg p-8 md:p-12 text-center">
                 <h2 class="text-3xl font-extrabold text-sky-800">Ready to Claim 100% of Your Revenue?</h2>
                 <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">The market opportunity is here, but it favors the decisive. Let our experts provide a no-cost, no-obligation assessment of your facility's full revenue potential.</p>
-                 <a href="#" class="mt-8 inline-block bg-orange-500 text-white font-bold py-4 px-10 rounded-lg text-xl hover:bg-orange-600 transition-transform hover:scale-105">Request Your Free Assessment</a>
+                 <a href="#" class="mt-8 inline-block bg-orange-500 text-white font-bold py-4 px-10 rounded-lg text-xl hover:bg-orange-600 transition-transform hover:scale-105">Apply for a Private Assessment</a>
             </div>
         </section>
 
@@ -195,6 +231,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const eligibilityBtn = document.getElementById('check-eligibility-btn');
+            const eligibilityResult = document.getElementById('eligibility-result');
+            const contractExpiryInput = document.getElementById('contract-expiry');
+
+            eligibilityBtn.addEventListener('click', () => {
+                const expiryDate = contractExpiryInput.value;
+                if (!expiryDate) {
+                    eligibilityResult.textContent = 'Please select your contract expiration date.';
+                    eligibilityResult.classList.remove('hidden', 'text-green-600');
+                    eligibilityResult.classList.add('text-red-600');
+                    return;
+                }
+                eligibilityResult.textContent = 'Thank you. Based on your input, you are a strong candidate for this program. A representative will contact you shortly to schedule your private assessment.';
+                eligibilityResult.classList.remove('hidden', 'text-red-600');
+                eligibilityResult.classList.add('text-green-600');
+            });
+
             const capacityPriceData = {
                 labels: ['2022-23', '2023-24', '2024-25', '2025-26', '2026-27'],
                 data: [12457, 10556, 18064, 35960, 120147]
@@ -351,3 +404,4 @@
     </script>
 </body>
 </html>
+
