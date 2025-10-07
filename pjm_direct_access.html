@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PJM Direct Access: 100% Demand Response Revenue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Corporate Tech (Blues, Teals, Grays, with an Orange Accent) -->
+    <!-- Application Structure Plan: The SPA is designed as a narrative sales funnel. It starts with a "hook" – the massive financial opportunity in PJM – to grab attention. It then defines "the problem" by visualizing the "CSP Tax" to create urgency. "The Solution," PJM Direct Access, is then introduced. The core of the application is an interactive ROI calculator, allowing users (specifically the Financial Steward persona) to personalize the value proposition. The subsequent "How it Works" and "Targeted Benefits" sections are designed to address the specific fears and motivations of the Operational, Financial, and ESG personas identified in the report. This user-centric, problem-solution-proof structure is more persuasive and easier to navigate than mirroring the report's chapter layout. -->
+    <!-- Visualization & Content Choices: 1. PJM Price Growth: (Goal: Change) A Chart.js Bar Chart visualizes the dramatic price increase from the report's table, making the trend immediately obvious. Interaction: Tooltips. 2. CSP Tax Calculator: (Goal: Compare) An interactive slider connected to a Chart.js Doughnut Chart shows users how much revenue they lose to commissions, personalizing "the problem." 3. Value Pillars: (Goal: Organize) Styled HTML cards with Unicode icons clearly present the three core messages. 4. ROI Calculator: (Goal: Compare/Inform) A JS-powered form lets users input their capacity and see the financial upside, directly targeting the CFO. 5. Persona Benefits: (Goal: Organize) An interactive tabbed section built with HTML/JS allows each stakeholder to see content relevant only to them, increasing engagement. 6. Comparison Table: (Goal: Compare) A clear HTML table contrasts the old vs. new model. ALL VIZ confirms to NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+        .nav-link { transition: all 0.2s ease-in-out; }
+        .nav-link:hover { color: #f97316; }
+        .tab.active { border-color: #f97316; color: #0369a1; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-extrabold text-sky-700">PJM DIRECT ACCESS</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#opportunity" class="nav-link font-semibold text-slate-600">The Opportunity</a>
+                <a href="#solution" class="nav-link font-semibold text-slate-600">The Solution</a>
+                <a href="#calculator" class="nav-link font-semibold text-slate-600">ROI Calculator</a>
+                <a href="#benefits" class="nav-link font-semibold text-slate-600">Your Benefits</a>
+            </div>
+            <a href="#contact" class="hidden md:block bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors">Get Started</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="opportunity" class="text-center py-16">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-sky-800 leading-tight">The PJM Demand Response <span class="text-orange-500">Gold Rush</span> Is Here.</h1>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">A confluence of market forces has caused PJM capacity prices to surge to unprecedented levels. This has transformed Demand Response into a multi-million dollar opportunity for businesses like yours. The question is: are you capturing its full value?</p>
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mt-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-sky-700 mb-4">The Dramatic Rise in PJM Capacity Prices</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto mb-6">Prices have skyrocketed, turning energy flexibility into a major financial asset. This chart shows the exponential growth in what PJM pays for capacity, highlighting the increasing cost of inaction.</p>
+                <div class="chart-container">
+                    <canvas id="capacityPriceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="problem" class="py-16">
+            <div class="text-center">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800">Are You Paying the "CSP Tax"?</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">Traditional providers (CSPs) take a significant cut of your earnings—a commission we call the "CSP Tax." In today's high-price market, that commission can cost you hundreds of thousands of dollars annually. See for yourself.</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="text-center md:text-left">
+                    <h3 class="text-2xl font-bold text-sky-700">Visualize Your Lost Revenue</h3>
+                    <p class="text-slate-600 mt-2 mb-6">Use the slider to select your facility's potential energy reduction (in Megawatts). The chart on the right will instantly update to show the portion of YOUR revenue a traditional CSP would likely keep.</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="mw-slider" class="font-semibold text-slate-700">Your Curtailment Potential: <span id="mw-value" class="font-bold text-orange-500 text-xl">5 MW</span></label>
+                            <input id="mw-slider" type="range" min="1" max="50" value="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-lg">
+                            <p class="font-bold text-sky-800">Potential Annual Revenue:</p>
+                            <p id="csp-tax-revenue" class="text-3xl font-extrabold text-sky-800">$600,735</p>
+                        </div>
+                         <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                            <p class="font-bold text-red-800">Estimated "CSP Tax" (20%):</p>
+                            <p id="csp-tax-value" class="text-3xl font-extrabold text-red-800">$120,147</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="chart-container" style="height: 300px; max-height: 350px;">
+                        <canvas id="cspTaxChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solution" class="text-center py-16">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-sky-800">The Solution: PJM Direct Access</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">We've eliminated the middleman. Our revolutionary zero-commission model, powered by industry-leading technology and market expertise, ensures you keep what you earn. All of it.</p>
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="text-5xl mb-4">💰</div>
+                    <h3 class="text-2xl font-bold text-sky-700">100% Revenue, Zero Commission</h3>
+                    <p class="mt-2 text-slate-600">This is our disruptive promise. Stop sharing your profits. Our model is built on partnership, not intermediation. You receive the full market value for your energy flexibility.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="text-5xl mb-4">🤖</div>
+                    <h3 class="text-2xl font-bold text-sky-700">Intelligent Automation, Zero Disruption</h3>
+                    <p class="mt-2 text-slate-600">Our AI-powered platform makes participation safe and seamless. We work within your pre-set operational limits to maximize revenue without ever impacting your core business.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="text-5xl mb-4">🤝</div>
+                    <h3 class="text-2xl font-bold text-sky-700">Trusted Partnership, Zero Risk</h3>
+                    <p class="mt-2 text-slate-600">Backed by Constellation's market leadership and GridBeyond's award-winning technology, this isn't a speculative offer—it's a bankable promise from two industry giants.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="calculator" class="py-16">
+             <div class="bg-sky-800 rounded-xl shadow-2xl p-8 md:p-12 text-white">
+                <div class="text-center">
+                    <h2 class="text-3xl md:text-4xl font-extrabold">Calculate Your Advantage</h2>
+                    <p class="mt-4 max-w-3xl mx-auto text-lg text-sky-200">Enter your facility's estimated load curtailment potential below to see the stark financial difference between PJM Direct Access and a traditional CSP model.</p>
+                </div>
+                <div class="mt-10 flex flex-col items-center justify-center">
+                    <div class="flex items-center space-x-4">
+                        <input type="number" id="mw-input" value="10" min="1" class="bg-white text-slate-800 text-2xl font-bold rounded-lg p-4 w-48 text-center focus:ring-4 focus:ring-orange-400 focus:outline-none">
+                        <span class="text-2xl font-bold">MW</span>
+                    </div>
+                     <button id="calculate-btn" class="mt-6 bg-orange-500 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-orange-600 transition-transform hover:scale-105">Calculate</button>
+                </div>
+                 <div id="results" class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-center transition-opacity duration-500 opacity-0">
+                    <div class="bg-white/10 p-6 rounded-lg">
+                        <p class="text-sky-200 font-semibold">Your Annual Revenue (PJM Direct Access)</p>
+                        <p id="direct-revenue" class="text-4xl font-extrabold text-white mt-2">$0</p>
+                    </div>
+                    <div class="bg-white/10 p-6 rounded-lg">
+                        <p class="text-sky-200 font-semibold">Revenue with a Traditional CSP (Est. 80%)</p>
+                        <p id="csp-revenue" class="text-4xl font-extrabold text-slate-300 mt-2">$0</p>
+                    </div>
+                    <div class="bg-orange-500 p-6 rounded-lg">
+                        <p class="text-white font-semibold">Your Additional Annual Profit</p>
+                        <p id="extra-revenue" class="text-4xl font-extrabold text-white mt-2">$0</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="benefits" class="py-16">
+            <div class="text-center">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-sky-800">A Tailored Value Proposition for Every Stakeholder</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">We understand that the decision to participate involves multiple stakeholders. Our solution is designed to deliver clear, compelling benefits for every member of your decision-making unit.</p>
+            </div>
+            <div class="mt-12">
+                <div class="flex justify-center border-b border-slate-300 mb-8">
+                    <button data-tab="financial" class="tab active font-bold text-lg py-3 px-6 border-b-4">For the Financial Steward</button>
+                    <button data-tab="operational" class="tab font-bold text-lg py-3 px-6 border-b-4 border-transparent text-slate-500">For the Operational Guardian</button>
+                    <button data-tab="esg" class="tab font-bold text-lg py-3 px-6 border-b-4 border-transparent text-slate-500">For the ESG Champion</button>
+                </div>
+                <div id="tab-content" class="bg-white rounded-xl shadow-lg p-8 md:p-10">
+                    <div id="financial-content" class="tab-pane">
+                        <h3 class="text-2xl font-bold text-sky-700">Maximize ROI, Minimize Risk</h3>
+                        <p class="mt-4 text-slate-600">For the CFO, PJM Direct Access represents a powerful, low-risk, high-return financial strategy. It's not a cost center; it's a predictable, high-margin revenue stream that acts as a direct hedge against rising energy expenditures.</p>
+                        <ul class="mt-6 space-y-4">
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Unlock a New Revenue Stream:</strong> Turn dormant energy flexibility into a six- or seven-figure annual profit center.</div></li>
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Achieve Budget Certainty:</strong> The revenue generated directly offsets volatile energy costs, improving financial predictability.</div></li>
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Zero CapEx, Full Transparency:</strong> No upfront investment required. Our portal provides full visibility into every dollar earned, eliminating the opaque accounting of traditional CSPs.</div></li>
+                        </ul>
+                    </div>
+                    <div id="operational-content" class="tab-pane hidden">
+                        <h3 class="text-2xl font-bold text-sky-700">Automate Participation, Guarantee Uptime</h3>
+                        <p class="mt-4 text-slate-600">For the Energy or Facilities Manager, our primary goal is to eliminate operational risk. Our technology is designed to work as a silent, intelligent partner that never violates your pre-defined rules or adds to your team's workload.</p>
+                         <ul class="mt-6 space-y-4">
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Digital Twin Modeling:</strong> We simulate participation in a virtual model of your facility first, perfecting strategies without touching live operations.</div></li>
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Fully Autonomous Control:</strong> Our AI platform responds to grid events automatically, operating within your inviolable constraints (e.g., temperature ranges, production schedules). No manual intervention is needed.</div></li>
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Seamless Integration:</strong> Our process is non-intrusive and compatible with all major Building Automation and Energy Management Systems.</div></li>
+                        </ul>
+                    </div>
+                    <div id="esg-content" class="tab-pane hidden">
+                        <h3 class="text-2xl font-bold text-sky-700">Drive Measurable Decarbonization</h3>
+                        <p class="mt-4 text-slate-600">For the Chief Sustainability Officer, PJM Direct Access is one of the most direct and impactful ways to advance corporate ESG goals. It's not an offset; it's an active contribution to a cleaner, more resilient grid.</p>
+                         <ul class="mt-6 space-y-4">
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Enable Renewable Energy:</strong> Your flexibility helps balance the grid, making it possible to integrate more intermittent wind and solar power.</div></li>
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Reduce Fossil Fuel Reliance:</strong> Every MW of demand response helps avoid the need to turn on expensive and inefficient fossil-fuel "peaker" plants during times of high demand.</div></li>
+                            <li class="flex items-start"><span class="text-green-500 font-bold text-xl mr-3">✔</span><div><strong class="text-slate-800">Quantifiable Impact:</strong> We provide the data you need to authentically report on your contribution to grid stability and decarbonization in your annual sustainability reports.</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-16">
+             <div class="bg-white rounded-xl shadow-lg p-8 md:p-12 text-center">
+                <h2 class="text-3xl font-extrabold text-sky-800">Ready to Claim 100% of Your Revenue?</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">The market opportunity is here, but it favors the decisive. Let our experts provide a no-cost, no-obligation assessment of your facility's full revenue potential.</p>
+                 <a href="#" class="mt-8 inline-block bg-orange-500 text-white font-bold py-4 px-10 rounded-lg text-xl hover:bg-orange-600 transition-transform hover:scale-105">Request Your Free Assessment</a>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-slate-800 text-slate-300 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 PJM Direct Access. A joint partnership of Constellation and GridBeyond.</p>
+            <p class="text-sm text-slate-400 mt-2">The information and financial calculations provided on this page are for illustrative purposes only, based on publicly available PJM market data. Actual revenue may vary.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const capacityPriceData = {
+                labels: ['2022-23', '2023-24', '2024-25', '2025-26', '2026-27'],
+                data: [12457, 10556, 18064, 35960, 120147]
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(3, 105, 161, 0.9)',
+                        titleFont: { size: 16, weight: 'bold', family: 'Inter' },
+                        bodyFont: { size: 14, family: 'Inter' },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#475569', font: { family: 'Inter', weight: '600' } },
+                        grid: { display: false }
+                    },
+                    y: {
+                        ticks: { 
+                            color: '#475569', 
+                            font: { family: 'Inter' },
+                            callback: function(value) {
+                                return '$' + (value / 1000) + 'k';
+                            }
+                        },
+                        grid: { color: '#e2e8f0' }
+                    }
+                }
+            };
+
+            const capacityPriceCtx = document.getElementById('capacityPriceChart').getContext('2d');
+            new Chart(capacityPriceCtx, {
+                type: 'bar',
+                data: {
+                    labels: capacityPriceData.labels,
+                    datasets: [{
+                        label: '$/MW-year',
+                        data: capacityPriceData.data,
+                        backgroundColor: '#0ea5e9',
+                        borderColor: '#0284c7',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: chartOptions
+            });
+
+            const cspTaxChartCtx = document.getElementById('cspTaxChart').getContext('2d');
+            const cspTaxChart = new Chart(cspTaxChartCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Your Revenue (80%)', '"CSP Tax" (20%)'],
+                    datasets: [{
+                        data: [80, 20],
+                        backgroundColor: ['#0ea5e9', '#f87171'],
+                        borderColor: '#ffffff',
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#475569', font: { family: 'Inter', size: 14 } } },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const mwSlider = document.getElementById('mw-slider');
+            const mwValue = document.getElementById('mw-value');
+            const cspTaxRevenue = document.getElementById('csp-tax-revenue');
+            const cspTaxValue = document.getElementById('csp-tax-value');
+            const pricePerMwYear = 120147;
+
+            function updateCspTaxDisplay() {
+                const mw = parseInt(mwSlider.value);
+                mwValue.textContent = mw + ' MW';
+                const totalRevenue = mw * pricePerMwYear;
+                const tax = totalRevenue * 0.20;
+                cspTaxRevenue.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(totalRevenue);
+                cspTaxValue.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(tax);
+            }
+            mwSlider.addEventListener('input', updateCspTaxDisplay);
+            updateCspTaxDisplay();
+
+            const calculateBtn = document.getElementById('calculate-btn');
+            const mwInput = document.getElementById('mw-input');
+            const resultsDiv = document.getElementById('results');
+            const directRevenueEl = document.getElementById('direct-revenue');
+            const cspRevenueEl = document.getElementById('csp-revenue');
+            const extraRevenueEl = document.getElementById('extra-revenue');
+
+            function performCalculation() {
+                const mw = parseFloat(mwInput.value) || 0;
+                const directRevenue = mw * pricePerMwYear;
+                const cspRevenue = directRevenue * 0.8;
+                const extraRevenue = directRevenue - cspRevenue;
+
+                directRevenueEl.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(directRevenue);
+                cspRevenueEl.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(cspRevenue);
+                extraRevenueEl.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(extraRevenue);
+                
+                resultsDiv.classList.remove('opacity-0');
+            }
+            calculateBtn.addEventListener('click', performCalculation);
+            performCalculation();
+
+            const tabs = document.querySelectorAll('.tab');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.classList.add('text-slate-500', 'border-transparent');
+                    });
+                    tab.classList.add('active');
+                    tab.classList.remove('text-slate-500', 'border-transparent');
+                    
+                    const target = tab.getAttribute('data-tab');
+                    tabPanes.forEach(pane => {
+                        if (pane.id === `${target}-content`) {
+                            pane.classList.remove('hidden');
+                        } else {
+                            pane.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
